@@ -19,7 +19,7 @@ from lib.utils import as_numpy
 from PIL import Image
 from tqdm import tqdm
 
-colors = loadmat('data/color150.mat')['colors']
+colors = np.array([(0, 0, 0), (255, 255, 255)], type=uint8)
 
 
 def visualize_result(data, pred, dir_result):
@@ -32,11 +32,13 @@ def visualize_result(data, pred, dir_result):
     pred_color = colorEncode(pred, colors)
 
     # aggregate images and save
+    #im_vis = pred_color
     im_vis = np.concatenate((img, seg_color, pred_color),
                             axis=1).astype(np.uint8)
 
     img_name = info.split('/')[-1]
-    Image.fromarray(im_vis).save(os.path.join(dir_result, img_name.replace('.jpg', '.png')))
+    Image.fromarray(im_vis).save(os.path.join(
+        dir_result, img_name.replace('.jpg', '.png')))
 
 
 def evaluate(segmentation_module, loader, cfg, gpu_id, result_queue):
@@ -50,7 +52,8 @@ def evaluate(segmentation_module, loader, cfg, gpu_id, result_queue):
 
         with torch.no_grad():
             segSize = (seg_label.shape[0], seg_label.shape[1])
-            scores = torch.zeros(1, cfg.DATASET.num_class, segSize[0], segSize[1])
+            scores = torch.zeros(1, cfg.DATASET.num_class,
+                                 segSize[0], segSize[1])
             scores = async_copy_to(scores, gpu_id)
 
             for img in img_resized_list:
@@ -69,7 +72,8 @@ def evaluate(segmentation_module, loader, cfg, gpu_id, result_queue):
 
         # calculate accuracy and SEND THEM TO MASTER
         acc, pix = accuracy(pred, seg_label)
-        intersection, union = intersectionAndUnion(pred, seg_label, cfg.DATASET.num_class)
+        intersection, union = intersectionAndUnion(
+            pred, seg_label, cfg.DATASET.num_class)
         result_queue.put_nowait((acc, pix, intersection, union))
 
         # visualization
@@ -137,8 +141,10 @@ def main(cfg, gpus):
     for idx, gpu_id in enumerate(gpus):
         start_idx = idx * num_files_per_gpu
         end_idx = min(start_idx + num_files_per_gpu, num_files)
-        proc = Process(target=worker, args=(cfg, gpu_id, start_idx, end_idx, result_queue))
-        print('gpu:{}, start_idx:{}, end_idx:{}'.format(gpu_id, start_idx, end_idx))
+        proc = Process(target=worker, args=(
+            cfg, gpu_id, start_idx, end_idx, result_queue))
+        print('gpu:{}, start_idx:{}, end_idx:{}'.format(
+            gpu_id, start_idx, end_idx))
         proc.start()
         procs.append(proc)
 
@@ -210,7 +216,8 @@ if __name__ == '__main__':
     cfg.MODEL.weights_decoder = os.path.join(
         cfg.DIR, 'decoder_' + cfg.VAL.checkpoint)
     assert os.path.exists(cfg.MODEL.weights_encoder) and \
-        os.path.exists(cfg.MODEL.weights_decoder), "checkpoint does not exitst!"
+        os.path.exists(
+            cfg.MODEL.weights_decoder), "checkpoint does not exitst!"
 
     if not os.path.isdir(os.path.join(cfg.DIR, "result")):
         os.makedirs(os.path.join(cfg.DIR, "result"))

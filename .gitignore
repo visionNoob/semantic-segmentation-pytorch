@@ -4,3 +4,10 @@ ckpt/
 vis/
 log/
 pretrained/
+
+.vscode/
+data/ADE*
+ckpt/
+data/BawlingA
+data/BawlingB
+data/BawlingB_type2
