@@ -19,7 +19,7 @@ from lib.utils import as_numpy
 from PIL import Image
 from tqdm import tqdm
 
-colors = np.array([(0, 0, 0), (255, 255, 255)], type=uint8)
+colors = np.array([(0, 0, 0), (255, 255, 255)], dtype=np.uint8)
 
 
 def visualize_result(data, pred, dir_result):
@@ -32,9 +32,9 @@ def visualize_result(data, pred, dir_result):
     pred_color = colorEncode(pred, colors)
 
     # aggregate images and save
-    #im_vis = pred_color
-    im_vis = np.concatenate((img, seg_color, pred_color),
-                            axis=1).astype(np.uint8)
+    im_vis = pred_color
+    # im_vis = np.concatenate((img, seg_color, pred_color),
+    #                         axis=1).astype(np.uint8)
 
     img_name = info.split('/')[-1]
     Image.fromarray(im_vis).save(os.path.join(
@@ -81,7 +81,7 @@ def evaluate(segmentation_module, loader, cfg, gpu_id, result_queue):
             visualize_result(
                 (batch_data['img_ori'], seg_label, batch_data['info']),
                 pred,
-                os.path.join(cfg.DIR, 'result')
+                os.path.join(cfg.SAVE_DIR)
             )
 
 

@@ -1,7 +1,7 @@
 DATASET:
   root_dataset: "./data/"
-  list_train: "./data/training.odgt"
-  list_val: "./data/validation.odgt"
+  list_train: "../../semantic-segmentation-pytorch/data/bobcat_training.odgt"
+  list_val: "../../semantic-segmentation-pytorch/data/bobcat_validation.odgt"
   num_class: 2
   imgSizes: (300, 375, 450, 525, 600)
   imgMaxSize: 1000
@@ -17,7 +17,7 @@ MODEL:
 TRAIN:
   batch_size_per_gpu: 2
   num_epoch: 500
-  start_epoch: 0
+  start_epoch: 289
   epoch_iters: 360
   optim: "SGD"
   lr_encoder: 0.02
@@ -33,10 +33,11 @@ TRAIN:
 
 VAL:
   visualize: True
-  checkpoint: "epoch_183.pth"
+  checkpoint: "epoch_289.pth"
 
 TEST:
-  checkpoint: "epoch_183.pth"
+  checkpoint: "epoch_289.pth"
   result: "./"
 
-DIR: "ckpt/ade20k-resnet50-upernet_Bobcat"
+DIR: "../9999_outputs/1_segmentations_ckpts/ade20k-resnet50-upernet_Bobcat"
+SAVE_DIR: "../9999_outputs/2_segmentation_output/ade20k-resnet50-upernet_Bobcat_training"
